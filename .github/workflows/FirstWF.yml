@@ -1,0 +1,13 @@
+name: FirstWF
+
+on: 
+  push:
+    branches:
+      - "main"
+      - "feature/*"
+jobs:
+  Firstjob:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: 1st step
+        run: echo "Hola 1er Step"   
