@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-      - "feature/*"
   pull_request:
     branches: [main]
     types: [opened, synchronize]
@@ -33,6 +32,7 @@ jobs:
       - name: E2E tests Dummy
         run: echo "test3! test dummy run to by pass issue with server up"
       - name: Deploy to Heroku
+        if: ${{ github.event_name == 'push'}}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_OAUTH_TOKEN}}
