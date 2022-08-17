@@ -31,12 +31,12 @@ jobs:
       #    start: npm run start-test
       #    wait-on: http://localhost:5000
       - name: E2E tests Dummy
-        run: echo "test health check2! test dummy run to by pass issue with server up"
+        run: echo "test3! test dummy run to by pass issue with server up"
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_OAUTH_TOKEN}}
           heroku_app_name: ${{secrets.HEROKU_APP}} #Must be unique in Heroku
           heroku_email: ${{secrets.HEROKU_API_EMAIL}}
-          healthcheck: http://${{secrets.HEROKU_APP}}/health #URL to perform quick healthcheck
+          healthcheck: http://${{secrets.HEROKU_APP}}.herokuapp.com/health #URL to perform quick healthcheck
           rollbackonhealthcheckfailed: true #roll back if healtcheck fails
