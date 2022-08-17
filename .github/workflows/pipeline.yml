@@ -5,6 +5,9 @@ on:
     branches:
       - "main"
       - "feature/*"
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 jobs:
   deploy:
     runs-on: ubuntu-22.04
@@ -28,7 +31,7 @@ jobs:
       #    start: npm run start-test
       #    wait-on: http://localhost:5000
       - name: E2E tests Dummy
-        run: echo "test health check! test dummy run to by pass issue with server up"
+        run: echo "test health check2! test dummy run to by pass issue with server up"
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
