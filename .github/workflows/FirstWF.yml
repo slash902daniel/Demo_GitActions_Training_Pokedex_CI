@@ -10,4 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: 1st step
-        run: echo "Hola 1er Step"   
+        run: echo "Hola 1er Step"  
+      - name: Dime la fecha
+        run: date 
+      - run: ls -l 
