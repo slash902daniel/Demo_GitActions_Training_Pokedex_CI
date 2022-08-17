@@ -20,7 +20,7 @@ jobs:
       - name: Lint 
         run: npm run eslint 
       - name: Unit tests
-        run: npm Test
+        run: npm test
       - name : E2E tests
         uses: cypress-io/github-action@v4
         with: 
