@@ -11,6 +11,10 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     steps:
+      - name: Cancel previous redundant Builds
+        uses: styfle/cancel-workflow-action@0.10.0
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -30,7 +34,7 @@ jobs:
       #    start: npm run start-test
       #    wait-on: http://localhost:5000
       - name: E2E tests Dummy
-        run: echo "test3! test dummy run to by pass issue with server up"
+        run: echo "test dummy run to by pass issue with server up"
       - name: Deploy to Heroku
         if: ${{ github.event_name == 'push'}}
         uses: akhileshns/heroku-deploy@v3.12.12
