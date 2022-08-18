@@ -8,13 +8,29 @@ on:
     branches: [main]
     types: [opened, synchronize]
 jobs:
-  deploy:
+  avoid_Redundancy:
     runs-on: ubuntu-22.04
     steps:
       - name: Cancel previous redundant Builds
         uses: styfle/cancel-workflow-action@0.10.0
         with:
           access_token: ${{ github.token }}
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install Dependencies
+        run: npm install
+      - name: Lint 
+        run: npm run eslint 
+  build:
+    runs-on: ubuntu-22.04
+    steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -24,11 +40,45 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build
-        run: npm run build  
-      - name: Lint 
-        run: npm run eslint 
+        run: npm run build 
+      - uses: actions/upload-artifact@v2 #Pack to reuse in other JOBS
+        with:
+          name: dist
+          path: dist     
+  unit:
+    needs: [lint,build]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install Dependencies
+        run: npm install
+      - uses: actions/download-artifact@v2 #Download PACKED data
+        with:
+          name: dist
+          path: dist
       - name: Unit tests
         run: npm test
+  e2e:
+    needs: [lint,build]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install Dependencies
+        run: npm install
+      - uses: actions/download-artifact@v2 #Download PACKED data
+        with:
+          name: dist
+          path: dist
       #- name : E2E tests
       #  uses: cypress-io/github-action@v4
       #  with: 
@@ -37,6 +87,18 @@ jobs:
       #    wait-on: http://localhost:5000
       - name: E2E tests Dummy
         run: echo "test dummy run to by pass issue with server up"
+  deploy:
+    needs: [unit,e2e]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      #- uses: actions/setup-node@v3
+      #  with:
+      #    node-version: 14
+      #- name: Install Dependencies
+      #  run: npm install
       - name: Deploy to Heroku
         if: ${{ github.event_name == 'push'}}
         uses: akhileshns/heroku-deploy@v3.12.12
