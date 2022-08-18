@@ -15,7 +15,20 @@ jobs:
         uses: styfle/cancel-workflow-action@0.10.0
         with:
           access_token: ${{ github.token }}
+  installAndCache:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm' #cache the npm
+      - name: Install Dependencies
+        run: npm install
   lint:
+    needs: [installAndCache]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -29,6 +42,7 @@ jobs:
       - name: Lint 
         run: npm run eslint 
   build:
+    needs: [installAndCache]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
